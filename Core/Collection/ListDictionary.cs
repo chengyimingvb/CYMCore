@@ -22,7 +22,7 @@ namespace CYM
 
         public int Add(object key, object value)
         {
-            Add(key,value);
+            Add((TKey)key,(TVal)value);
             return 1;
         }
         public new void Add(TKey key,TVal ent)
