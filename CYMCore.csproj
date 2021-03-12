@@ -46,11 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Collection\AudioClipRegister.cs" />
+    <Compile Include="Core\Collection\ListDictionary.cs" />
     <Compile Include="Core\Collection\DiffData.cs" />
     <Compile Include="Core\Collection\RangeDic.cs" />
     <Compile Include="Core\Collection\BetterList.cs" />
     <Compile Include="Core\Collection\ComponsiteRegister.cs" />
-    <Compile Include="Core\Collection\DicList.cs" />
+    <Compile Include="Core\Collection\IDDicList.cs" />
     <Compile Include="Core\Collection\DulDic.cs" />
     <Compile Include="Core\Collection\Formation2D.cs" />
     <Compile Include="Core\Collection\GameobjectRegister.cs" />

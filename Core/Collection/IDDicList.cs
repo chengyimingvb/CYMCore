@@ -13,13 +13,13 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 namespace CYM
 {
-    public interface IDicList
+    public interface IIDDicList
     {
         int Add(object value);
     }
     [Serializable]
     [Unobfus]
-    public class DicList<T> : List<T>, IDicList, IDeserializationCallback 
+    public class IDDicList<T> : List<T>, IIDDicList, IDeserializationCallback 
         where T : IBase
     {
         [NonSerialized]
@@ -27,7 +27,7 @@ namespace CYM
         [NonSerialized]
         protected Dictionary<long, T> IDHash;
 
-        public DicList(List<T> rawData) : base()
+        public IDDicList(List<T> rawData) : base()
         {
             Hash = new Dictionary<string, T>();
             IDHash = new Dictionary<long, T>();
@@ -38,7 +38,7 @@ namespace CYM
             }
         }
 
-        public DicList() : base()
+        public IDDicList() : base()
         {
             Hash = new Dictionary<string, T>();
             IDHash = new Dictionary<long, T>();
