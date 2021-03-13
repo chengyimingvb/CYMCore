@@ -83,6 +83,7 @@
     <Compile Include="Core\Extend\Enum.cs" />
     <Compile Include="Core\Extend\FrameTimer.cs" />
     <Compile Include="Core\Extend\ListIndexer.cs" />
+    <Compile Include="Core\Extend\Loger.cs" />
     <Compile Include="Core\Extend\Numeric.cs" />
     <Compile Include="Core\Extend\StrHash.cs" />
     <Compile Include="Core\Extend\Timing.cs" />
