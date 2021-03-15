@@ -33,7 +33,7 @@ namespace CYM
         #endregion
 
         #region per
-        public static string PerSign(this int percent) => BaseUIUtil.AddPercentSign(percent);
+        public static string PerSign(this int percent) => BaseUIUtil.AddPerSign(percent);
         public static string Per(this float percent) => BaseUIUtil.Per(percent);
         public static string PerC(this float percent, bool reverseColor = false) => BaseUIUtil.PerC(percent, reverseColor);
         public static string PerCS(this float percent, bool reverseColor = false) => BaseUIUtil.PerCS(percent, reverseColor);

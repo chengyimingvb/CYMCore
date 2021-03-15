@@ -21,7 +21,12 @@ namespace CYM
         public static string Decorate(string numberStr, string color) => string.Format("<color={0}>{1}</color>", color, numberStr);
         // 根据sign是否大于0决定一些东西
         // positiveSign:是否给正数写加号
-        static string DecorateStr(string numberStr, float sign, bool positiveSign, bool reverseColor) => string.Format("<color={0}>{1}{2}</color>", reverseColor ? GetColor(-sign) : GetColor(sign), positiveSign && sign >= 0 ? "+" : "", numberStr);
+        static string DecorateStr(string numberStr, float? sign, bool positiveSign, bool reverseColor)
+        {
+            if (sign == null)
+                return "";
+            return string.Format("<color={0}>{1}{2}</color>", reverseColor ? GetColor(-sign.Value) : GetColor(sign.Value), positiveSign && sign >= 0 ? "+" : "", numberStr);
+        }
 
         static string GetSign(float number)
         {
@@ -138,10 +143,6 @@ namespace CYM
         public static string KMG(float? number, KMGType type = KMGType.TenK)
         {
             if (number == null) return "";
-            return KMG(number.Value, type);
-        }
-        public static string KMG(float number, KMGType type = KMGType.TenK)
-        {
             float f = GetNumber((int)number);
             return ValidDigit(f, 2) + GetSuffix((int)number);
 
@@ -201,11 +202,11 @@ namespace CYM
                 return "";
             }
         }
-        public static string KMGC(float number, bool reverseColor = false, KMGType type = KMGType.TenK)
+        public static string KMGC(float? number, bool reverseColor = false, KMGType type = KMGType.TenK)
         {
             return DecorateStr(KMG((int)number, type), number, false, reverseColor);
         }
-        public static string KMGCS(float number, bool reverseColor = false, KMGType type = KMGType.TenK)
+        public static string KMGCS(float? number, bool reverseColor = false, KMGType type = KMGType.TenK)
         {
             return DecorateStr(KMG((int)number, type), number, true, reverseColor);
         }
@@ -213,17 +214,49 @@ namespace CYM
 
         #region 百分比
         // 裁剪小数部分
-        public static string AddPercentSign(int percent) => string.Format("{0}%", percent);
+        public static string AddPerSign(int? percent)
+        {
+            if (percent == null) return "";
+            return string.Format("{0}%", percent.Value);
+        }
         //百分号
-        public static string PerToInt(float percent, bool isHaveSignal = true) => string.Format("{0}", (int)(percent * 100)) + (isHaveSignal ? "%" : "");
-        public static string PerToIntCol(float percent, bool isHaveSignal = true) => DecorateStr(string.Format("{0}%", (int)(percent * 100)), percent, isHaveSignal, false);
+        public static string PerToInt(float? percent, bool isHaveSignal = true)
+        {
+            if (percent == null) return "";
+            return string.Format("{0}", (int)(percent.Value * 100)) + (isHaveSignal ? "%" : "");
+        }
+        public static string PerToIntCol(float? percent, bool isHaveSignal = true)
+        {
+            if (percent == null) return "";
+            return DecorateStr(string.Format("{0}%", (int)(percent.Value * 100)), percent.Value, isHaveSignal, false);
+        }
         // 保留小数部分
-        public static string Per(float percent) => string.Format("{0}%", OneD(percent * 100));
-        public static string PerSign(float percent) => percent >= 0 ? "+" + Per(percent) : Per(percent);
-        public static string PerC(float percent, bool reverseColor = false) => DecorateStr(Per(percent), percent, false, reverseColor);
-        public static string PerCS(float percent, bool reverseColor = false) => DecorateStr(Per(percent), percent, true, reverseColor);
+        public static string Per(float? percent)
+        {
+            if (percent == null) return "";
+            return string.Format("{0}%", OneD(percent.Value * 100));
+        }
+        public static string PerSign(float? percent)
+        {
+            if (percent == null) return "";
+            return percent >= 0 ? "+" + Per(percent) : Per(percent);
+        }
+        public static string PerC(float? percent, bool reverseColor = false)
+        {
+            if (percent == null) return "";
+            return DecorateStr(Per(percent), percent, false, reverseColor);
+        }
+        public static string PerCS(float? percent, bool reverseColor = false)
+        {
+            if (percent == null) return "";
+            return DecorateStr(Per(percent), percent, true, reverseColor);
+        }
         // 天枰颜色
-        public static string PerApparently(float percent, string colorLeft = SysConst.COL_Yellow, string colorRight = SysConst.COL_Green) => string.Format("<color={0}>{1}</color>", percent <= 0.0f ? colorLeft : colorRight, Per(Mathf.Abs(percent)));
+        public static string PerApparently(float? percent, string colorLeft = SysConst.COL_Yellow, string colorRight = SysConst.COL_Green)
+        {
+            if (percent == null) return "";
+            return string.Format("<color={0}>{1}</color>", percent.Value <= 0.0f ? colorLeft : colorRight, Per(Mathf.Abs(percent.Value)));
+        }
         #endregion
 
         #region UI Special
