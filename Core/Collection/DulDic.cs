@@ -19,7 +19,7 @@ namespace CYM
     [Unobfus]
     public class DulDic<TKey, TValue> : Dictionary<TKey, TValue>, IDulDic
     {
-        Dictionary<TValue, TKey> ValueKeys = new Dictionary<TValue, TKey>();
+        public Dictionary<TValue, TKey> ValueKeys { get; protected set; } = new Dictionary<TValue, TKey>();
 
         public TKey this[TValue value]
         {

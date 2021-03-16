@@ -20,8 +20,7 @@ namespace CYM
     [Serializable]
     public class HashList<T> : List<T>, IHashList, IDeserializationCallback
     {
-        [NonSerialized]
-        protected HashSet<T> Hash;
+        public HashSet<T> Hash { get; private set; }
 
         public HashList() : base()
         {
@@ -105,6 +104,11 @@ namespace CYM
         void IDeserializationCallback.OnDeserialization(object sender)
         {
             Hash = new HashSet<T>(this);
+        }
+
+        public static explicit operator HashSet<T>(HashList<T> data)
+        {
+            return data.Hash;
         }
     }
 }

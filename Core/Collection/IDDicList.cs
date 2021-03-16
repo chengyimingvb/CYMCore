@@ -129,13 +129,11 @@ namespace CYM
             IDHash.Clear();
             base.Clear();
         }
-
         public int Add(object value)
         {
             Add((T)value);
             return Count;
         }
-
         void IDeserializationCallback.OnDeserialization(object sender)
         {
             Hash = new Dictionary<string, T>();
@@ -152,6 +150,16 @@ namespace CYM
                 if (!IDHash.ContainsKey(ent.ID))
                     IDHash.Add(ent.ID, ent);
             }
+        }
+
+        public static explicit operator Dictionary<string, T>(IDDicList<T> data)
+        {
+            return data.Hash;
+        }
+
+        public static explicit operator Dictionary<long, T>(IDDicList<T> data)
+        {
+            return data.IDHash;
         }
     }
 }

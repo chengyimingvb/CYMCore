@@ -6,6 +6,7 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 namespace CYM
@@ -45,6 +46,11 @@ namespace CYM
         {
             base.Clear();
             ListData.Clear();
+        }
+
+        public static explicit operator List<TVal>(ListDictionary<TKey, TVal> data)
+        {
+            return data.ListData;
         }
     }
 }

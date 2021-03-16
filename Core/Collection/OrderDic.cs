@@ -72,5 +72,14 @@ namespace CYM
         {
             return Dics.ContainsKey(key);
         }
+
+        public static explicit operator List<TKey>(OrderDic<TKey, TValue> data)
+        {
+            return data.Keys;
+        }
+        public static explicit operator Dictionary<TKey, TValue>(OrderDic<TKey, TValue> data)
+        {
+            return data.Dics;
+        }
     }
 }
