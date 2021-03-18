@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Collection\AudioClipRegister.cs" />
-    <Compile Include="Core\Collection\ListDictionary.cs" />
+    <Compile Include="Core\Collection\ListDic.cs" />
     <Compile Include="Core\Collection\DiffData.cs" />
     <Compile Include="Core\Collection\RangeDic.cs" />
     <Compile Include="Core\Collection\BetterList.cs" />

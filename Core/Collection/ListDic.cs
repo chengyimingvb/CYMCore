@@ -11,13 +11,13 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 namespace CYM
 {
-    public interface IListDictionary
+    public interface IListDic
     {
         int Add(object key,object value);
     }
     [Serializable]
     [Unobfus]
-    public class ListDictionary<TKey,TVal> : Dictionary<TKey,TVal>, IListDictionary
+    public class ListDic<TKey,TVal> : Dictionary<TKey,TVal>, IListDic
     {
         public List<TVal> ListData { get; private set; } = new List<TVal>();
 
@@ -48,7 +48,7 @@ namespace CYM
             ListData.Clear();
         }
 
-        public static explicit operator List<TVal>(ListDictionary<TKey, TVal> data)
+        public static explicit operator List<TVal>(ListDic<TKey, TVal> data)
         {
             return data.ListData;
         }
