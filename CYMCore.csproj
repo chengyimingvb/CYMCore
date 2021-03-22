@@ -80,6 +80,7 @@
     <Compile Include="Core\Extend\CMail.cs" />
     <Compile Include="Core\Extend\Delay.cs" />
     <Compile Include="Core\Extend\DirtyAction.cs" />
+    <Compile Include="Core\Extend\Dirtyword.cs" />
     <Compile Include="Core\Extend\Enum.cs" />
     <Compile Include="Core\Extend\FrameTimer.cs" />
     <Compile Include="Core\Extend\ListIndexer.cs" />
