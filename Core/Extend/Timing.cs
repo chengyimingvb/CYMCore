@@ -125,6 +125,7 @@ namespace CYM
         /// You can use "yield return Timing.WaitForOneFrame;" inside a coroutine function to go to the next frame. 
         /// </summary>
         public const float WaitForOneFrame = float.NegativeInfinity;
+        public const float Frame = float.NegativeInfinity;
         /// <summary>
         /// The main thread that (almost) everything in unity runs in.
         /// </summary>
