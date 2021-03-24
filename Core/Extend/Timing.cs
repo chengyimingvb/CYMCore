@@ -3342,6 +3342,12 @@ namespace CYM
             return LocalTime + waitTime;
         }
 
+        public static float Wait(float waitTime)
+        {
+            if (float.IsNaN(waitTime)) waitTime = 0f;
+            return LocalTime + waitTime;
+        }
+
         /// <summary>
         /// Use "yield return timingInstance.WaitForSecondsOnInstance(time);" to wait for the specified number of seconds.
         /// </summary>
