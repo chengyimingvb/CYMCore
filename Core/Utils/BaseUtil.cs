@@ -14,6 +14,10 @@ namespace CYM
     }
     public class BaseUtil
     {
+        #region static
+        static DateTime DateTime1970 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+        #endregion
+
         #region info
         public static string SimpleSystemInfo
         {
@@ -361,6 +365,28 @@ namespace CYM
                 action?.Invoke(index,item);
                 index++;
             }
+        }
+        #endregion
+
+        #region time
+        /// <summary>
+        /// 获取1970-01-01至dateTime的毫秒数
+        /// </summary>
+        public static long GetTimestamp(DateTime dateTime)
+        {
+            return (dateTime.Ticks - DateTime1970.Ticks) / 10000;
+        }
+        public static long GetTimestamp()
+        {
+            return (DateTime.Now.Ticks - DateTime1970.Ticks) / 10000;
+        }
+        /// <summary>
+        /// 根据时间戳timestamp（单位毫秒）计算日期
+        /// </summary>
+        public static DateTime GetDateTime(long timestamp)
+        {
+            long t = DateTime1970.Ticks + timestamp * 10000;
+            return new DateTime(t);
         }
         #endregion
     }
