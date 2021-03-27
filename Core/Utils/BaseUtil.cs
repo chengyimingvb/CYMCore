@@ -380,6 +380,13 @@ namespace CYM
         {
             return (DateTime.Now.Ticks - DateTime1970.Ticks) / 10000;
         }
+        public static TimeSpan GetTimespan(long startTicks)
+        {
+            var ret = DateTime.Now.Ticks - startTicks;
+            if (ret < 0)
+                ret = 0;
+            return new TimeSpan(ret);
+        }
         /// <summary>
         /// 根据时间戳timestamp（单位毫秒）计算日期
         /// </summary>
