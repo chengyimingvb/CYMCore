@@ -374,11 +374,11 @@ namespace CYM
         /// </summary>
         public static long GetTimestamp(DateTime dateTime)
         {
-            return (dateTime.Ticks - DateTime1970.Ticks) / 10000;
+            return (dateTime.Ticks - DateTime1970.Ticks);
         }
         public static long GetTimestamp()
         {
-            return (DateTime.Now.Ticks - DateTime1970.Ticks) / 10000;
+            return (DateTime.Now.Ticks - DateTime1970.Ticks);
         }
         public static TimeSpan GetTimespan(long startTicks)
         {
@@ -392,7 +392,7 @@ namespace CYM
         /// </summary>
         public static DateTime GetDateTime(long timestamp)
         {
-            long t = DateTime1970.Ticks + timestamp * 10000;
+            long t = DateTime1970.Ticks + timestamp;
             return new DateTime(t);
         }
         #endregion
