@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CYMCore", "CYMCore.csproj", "{88C7D5CD-6928-4C8A-8FDF-3D17D13C5FE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88C7D5CD-6928-4C8A-8FDF-3D17D13C5FE3}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{88C7D5CD-6928-4C8A-8FDF-3D17D13C5FE3}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{88C7D5CD-6928-4C8A-8FDF-3D17D13C5FE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88C7D5CD-6928-4C8A-8FDF-3D17D13C5FE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F5F4037F-84CB-47D2-943F-D6628BE02A53}
+	EndGlobalSection
+EndGlobal
