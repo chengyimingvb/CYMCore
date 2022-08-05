@@ -10,6 +10,7 @@ namespace CYM
         public static bool Enable { get; private set; } = true;
         public static LogLevel Level { get; private set; } = LogLevel.Warn;
         public static Dictionary<string, TagInfo> Tags { get; private set; } = new Dictionary<string, TagInfo>();
+        public static bool IsLogTime { get; set; } = false;
         #endregion
 
         #region data class
@@ -63,7 +64,7 @@ namespace CYM
             if (!Enable) return;
             if (Level <= LogLevel.Error)
             {
-                UnityEngine.Debug.LogError(string.Format(format, ps));
+                UnityEngine.Debug.LogError(GetTime() + string.Format(format, ps));
             }
         }
         public static void Info(string format, params object[] ps)
@@ -71,7 +72,7 @@ namespace CYM
             if (!Enable) return;
             if (Level <= LogLevel.Info)
             {
-                UnityEngine.Debug.LogFormat(string.Format("<b>Info:</b>{0}",format), ps);
+                UnityEngine.Debug.LogFormat(GetTime() + string.Format("<b>Info:</b>{0}",format), ps);
             }
         }
         public static void Warn(string format, params object[] ps)
@@ -79,7 +80,7 @@ namespace CYM
             if (!Enable) return;
             if (Level <= LogLevel.Warn)
             {
-                UnityEngine.Debug.LogWarningFormat(format, ps);
+                UnityEngine.Debug.LogWarningFormat(GetTime() + format, ps);
             }
         }
         public static void Log(string message, params object[] ps)
@@ -87,7 +88,7 @@ namespace CYM
             if (!Enable) return;
             if (Level <= LogLevel.Debug)
             {
-                UnityEngine.Debug.LogFormat(message, ps);
+                UnityEngine.Debug.LogFormat(GetTime() + message, ps);
             }
         }
         public static void Debug(string tag, string format, params object[] ps)
@@ -96,7 +97,7 @@ namespace CYM
             if (Level > LogLevel.Debug) return;
             if (tag == TagNormal)
             {
-                UnityEngine.Debug.LogFormat(string.Format("<b>Debug:</b>{0}",format), ps);
+                UnityEngine.Debug.LogFormat(GetTime() + string.Format("<b>Debug:</b>{0}",format), ps);
             }
             else
             {
@@ -104,10 +105,10 @@ namespace CYM
                 if (!Tags[tag].Enable) return;
                 if (string.IsNullOrEmpty(Tags[tag].Hex))
                 {
-                    UnityEngine.Debug.LogFormat(format, ps);
+                    UnityEngine.Debug.LogFormat(GetTime() + format, ps);
                     return;
                 }
-                UnityEngine.Debug.LogFormat(string.Format("<b>Debug:</b><color={0}>{1}</color>", Tags[tag].Hex, format), ps);
+                UnityEngine.Debug.LogFormat(GetTime() + string.Format("<b>Debug:</b><color={0}>{1}</color>", Tags[tag].Hex, format), ps);
             }
         }
         public static void Debug(string format, params object[] ps) => Debug(TagNormal, format, ps);
@@ -119,12 +120,25 @@ namespace CYM
         {
             if (!Enable) return;
             if (Level > LogLevel.Debug) return;
-            UnityEngine.Debug.LogFormat(string.Format("<color={0}>{1}</color>", col, format), ps);
+            UnityEngine.Debug.LogFormat(GetTime() + string.Format("<color={0}>{1}</color>", col, format), ps);
+        }
+        public static void Editor(string format, params object[] ps)
+        {
+            if (!Application.isEditor)
+                return;
+            UnityEngine.Debug.Log(string.Format(format,ps));
         }
         #endregion
 
         #region is
         static bool IsTagExist(string tag) => Tags.ContainsKey(tag);
         #endregion
+
+        static string GetTime()
+        {
+            if(IsLogTime)
+                return $"[{Time.realtimeSinceStartup.ToString("0.00")}]";
+            return "";
+        }
     }
 }

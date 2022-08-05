@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 namespace CYM
@@ -98,10 +97,18 @@ namespace CYM
         public PositionData(string fileName, float mapNormal, float mapWidth, float mapHeight)
         {
             PosFile = fileName;
+            TextAsset ta = Resources.Load(PosFile) as TextAsset;
+            Load(ta, mapNormal, mapWidth, mapHeight);
+        }
+        public PositionData(TextAsset ta, float mapNormal, float mapWidth, float mapHeight)
+        {
+            Load( ta,  mapNormal,  mapWidth,  mapHeight);
+        }
+        void Load(TextAsset ta, float mapNormal, float mapWidth, float mapHeight)
+        {
             MapNormal = mapNormal;
             MapWidth = mapWidth;
             MapHeight = mapHeight;
-            TextAsset ta = Resources.Load(PosFile) as TextAsset;
             if (ta != null)
             {
                 PosData = JsonUtility.FromJson<PosData>(ta.text);

@@ -13,6 +13,7 @@ obj/
  
 Debug/
 ipch/
+*.sln
 *.db
 *.vcxproj
 *.filters

@@ -6,8 +6,6 @@
 // 填写类的描述...
 //------------------------------------------------------------------------------
 
-using UnityEngine;
-using CYM;
 using System.Net.Mail;
 using System.Text;
 using System.Net;
@@ -21,18 +19,24 @@ namespace CYM
 		static SmtpClient smtpClient = null;
 		static Attachment attachment = null;
 		static bool IsSending = false;
+		static string AddressName = "1678184904@qq.com";
+		static string DisplayName = "CYM";
+		public static void Init(string displayName)
+		{
+			DisplayName = displayName;
+		}
 		public static void Send(string title,string desc,string attachFile=null)
 		{
 			if (IsSending)
 				return;
 			IsSending = true;
 			//Mail 內容設定
-			message = new MailMessage(new MailAddress("as8506@qq.com", "CYM"), new MailAddress("as8506@qq.com", "CYM"));//MailMessage(寄信者, 收信者)
+			message = new MailMessage(new MailAddress(AddressName, DisplayName), new MailAddress(AddressName, DisplayName));//MailMessage(寄信者, 收信者)
 
 			message.SubjectEncoding = Encoding.UTF8;    //標題編碼
 			message.BodyEncoding = Encoding.UTF8;       //內容編碼
 
-			message.Subject = title;           //E-mail主旨
+			message.Subject = DisplayName + "：" + title;           //E-mail主旨
 			message.Body = desc;                  //E-mail內容
 
 			if (attachFile!=null && File.Exists(attachFile))
@@ -45,7 +49,7 @@ namespace CYM
             //mail server 內容設定
             
 			smtpClient = new SmtpClient("smtp.qq.com", 25); //gmail smtp設定 port:587  SMTP: smtp.gmail.com
-			smtpClient.Credentials = new NetworkCredential("as8506@qq.com", "uinyikesvvopbaia");//gmail 帳密    "hahamiror@gmail.com", "hahamiror123"																									
+			smtpClient.Credentials = new NetworkCredential(AddressName, "jlkgpjgdvitobecf");//gmail 帳密    "hahamiror@gmail.com", "hahamiror123"																									
 			smtpClient.EnableSsl = true;
 			//完成寄信後的callback function
 			smtpClient.SendCompleted += smtp_SendCompleted;

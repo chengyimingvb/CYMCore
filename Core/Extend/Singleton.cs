@@ -7,6 +7,8 @@
 // Copyright ©1995 [CYMCmmon] Powered By [CYM] Version 1.0.0 
 //**********************************************
 
+using UnityEngine;
+
 namespace CYM
 {
     [Unobfus]
@@ -14,6 +16,7 @@ namespace CYM
     {
         static readonly object padlock = new object();
         private static T singleton;
+        [HideInInspector]
         public static T Ins
         {
             get

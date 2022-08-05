@@ -85,6 +85,23 @@ namespace CYM
             c.y = 0;
             return c.magnitude;
         }
+        public static float Distance(Vector3 a, Vector3 b)
+        {
+            Vector3 c = a - b;
+            return c.magnitude;
+        }
+        public static float XYDistance(Vector3 a, Vector3 b)
+        {
+            Vector3 c = a - b;
+            c.z = 0;
+            return c.magnitude;
+        }
+        public static float XYSqrDistance(Vector3 a, Vector3 b)
+        {
+            Vector3 c = a - b;
+            c.z = 0;
+            return c.sqrMagnitude;
+        }
         #endregion
 
         #region Approximately
@@ -101,9 +118,18 @@ namespace CYM
                 Mathf.Abs(a.y - b.y) <= val &&
                 Mathf.Abs(a.z - b.z) <= val;
         }
+        public static bool Approximately(float a, float b,float val)
+        {
+            return Mathf.Abs(a - b) <= val;
+        }
         public static bool Approximately(float a, float b)
         {
             return Mathf.Approximately(a, b);
+        }
+        public static bool ApproximatelyXZ(Vector3 a, Vector3 b, float val)
+        {
+            return Mathf.Abs(a.x - b.x) <= val &&
+                Mathf.Abs(a.z - b.z) <= val;
         }
         #endregion
 

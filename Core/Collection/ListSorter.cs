@@ -10,7 +10,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+//------------------------------------------------------------------------------
+// ListSorter.cs
+// Copyright 2019/2/19 
+// Created by CYM on 2019/2/19
+// Owner: CYM
+// 填写类的描述...
+//------------------------------------------------------------------------------
 namespace CYM
 {
     // 通用的表格排序类

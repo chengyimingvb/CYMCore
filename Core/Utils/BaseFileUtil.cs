@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
@@ -10,33 +11,7 @@ namespace CYM
 {
     public class BaseFileUtil
     {
-        #region normal
-        public static void SaveFile(string path, string content)
-        {
-            File.WriteAllText(path, content);
-        }
-
-        public static void SaveFile(Stream stream, string content)
-        {
-            StreamWriter writer = new StreamWriter(stream, Encoding.UTF8);
-            writer.Write(content);
-            writer.Close();
-        }
-
-        public static string LoadFile(Stream stream)
-        {
-            using (StreamReader sr = new StreamReader(stream, Encoding.UTF8))
-            {
-                return sr.ReadToEnd();
-            }
-        }
-
-        public static string LoadFile(string path)
-        {
-            if (File.Exists(path))
-                return File.ReadAllText(path);
-            return null;
-        }
+        #region dir
         /// <summary>
         /// 拷贝文件
         /// </summary>
@@ -48,7 +23,6 @@ namespace CYM
             string fileName = newFileName == "" ? Path.GetFileName(file) : Path.GetFileName(newFileName);
             File.Copy(file, Path.Combine(dir, fileName), true);
         }
-
         /// <summary>
         /// 拷贝文件夹
         /// </summary>
@@ -62,7 +36,7 @@ namespace CYM
             {
                 if (!Directory.Exists(sourceDirPath))
                 {
-                    UnityEngine.Debug.LogError("源文件目录不存在:"+ sourceDirPath);
+                    UnityEngine.Debug.LogError("源文件目录不存在:" + sourceDirPath);
                     return;
                 }
 
@@ -150,6 +124,55 @@ namespace CYM
             }
         }
         /// <summary>
+        /// 确保路径
+        /// </summary>
+        public static void EnsureDirectory(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+        }
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <param name="path"></param>
+        public static void DeleteDir(string path)
+        {
+            if (Directory.Exists(path))
+                Directory.Delete(path, true);
+        }
+        public static bool ExistsDir(string path)
+        {
+            return Directory.Exists(path);
+        }
+        #endregion
+
+        #region file
+        public static void SaveFile(string path, string content)
+        {
+            File.WriteAllText(path, content);
+        }
+        public static void SaveFile(Stream stream, string content)
+        {
+            StreamWriter writer = new StreamWriter(stream, Encoding.UTF8);
+            writer.Write(content);
+            writer.Close();
+        }
+        public static string LoadFile(Stream stream)
+        {
+            using (StreamReader sr = new StreamReader(stream, Encoding.UTF8))
+            {
+                return sr.ReadToEnd();
+            }
+        }
+        public static string LoadFile(string path)
+        {
+            if (File.Exists(path))
+                return File.ReadAllText(path);
+            return null;
+        }
+        /// <summary>
         /// 快速写文件
         /// </summary>
         /// <param name="path"></param>
@@ -165,18 +188,6 @@ namespace CYM
             fs.Flush();
             fs.Close();
         }
-
-        /// <summary>
-        /// 确保路径
-        /// </summary>
-        public static void EnsureDirectory(string path)
-        {
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-        }
-
         /// <summary>
         /// 获得指定目录下的所有文件
         /// </summary>
@@ -190,7 +201,13 @@ namespace CYM
                 return null;
             return Directory.GetFiles(path, searchParttern, searchOption);
         }
+        public static bool ExistsFile(string path)
+        {
+            return File.Exists(path);
+        }
+        #endregion
 
+        #region open
         /// <summary>
         /// 打开这个路径
         /// </summary>
@@ -205,7 +222,6 @@ namespace CYM
         {
             OpenExplorer(SysConst.Path_Dev);
         }
-
         /// <summary>
         /// 打开这个文件
         /// </summary>
@@ -214,16 +230,28 @@ namespace CYM
         {
             Process.Start(path);
         }
-        /// <summary>
-        /// 删除文件
-        /// </summary>
-        /// <param name="path"></param>
-        public static void DeletePath(string path)
-        {
-            if (Directory.Exists(path))
-                Directory.Delete(path, true);
-        }
+        #endregion
 
+        #region texture
+        //获得Final文件名称
+        public static string GetFinalDirectoryName(string item)
+        {
+            var vals = item.Replace('\\', '/');
+            var temps = vals.Split('/');
+            if (temps == null || temps.Length == 0)
+            {
+                UnityEngine.Debug.LogError("路径错误:" + item);
+            }
+            return temps[temps.Length - 1];
+        }
+        public static bool SaveTextureToPNG(Texture2D inputTex, string path)//Shader outputShader,
+        {
+            File.WriteAllBytes(path, inputTex.EncodeToPNG());
+            return true;
+        }
+        #endregion
+
+        #region path
         /// <summary>  
         /// 绝对路径转相对路径  
         /// </summary>  
@@ -290,24 +318,6 @@ namespace CYM
 
             string strResult = strBuilder.ToString();
             return strResult == string.Empty ? ".\\" : strResult;
-        }
-        //获得Final文件名称
-        public static string GetFinalDirectoryName(string item)
-        {
-            var vals = item.Replace('\\', '/');
-            var temps = vals.Split('/');
-            if (temps == null || temps.Length == 0)
-            {
-                UnityEngine.Debug.LogError("路径错误:"+ item);
-            }
-            return temps[temps.Length - 1];
-        }
-        public static bool SaveTextureToPNG(Texture2D inputTex, string path)//Shader outputShader,
-        {
-            File.WriteAllBytes(path, inputTex.EncodeToPNG());
-
-            return true;
-
         }
         #endregion
 
@@ -421,5 +431,52 @@ namespace CYM
         }
         #endregion
 
+        #region MD5
+        /// <summary>
+        /// 从字符串获取MD5
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string MD5(string str)
+        {
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            byte[] bytValue, bytHash;
+            bytValue = Encoding.UTF8.GetBytes(str);
+            bytHash = md5.ComputeHash(bytValue);
+            md5.Clear();
+            string sTemp = "";
+            for (int i = 0; i < bytHash.Length; i++)
+            {
+                sTemp += bytHash[i].ToString("X").PadLeft(2, '0');
+            }
+            return sTemp.ToUpper();
+        }
+
+        /// <summary>
+        /// 从文件中获取MD5
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static string MD5File(string filePath)
+        {
+            try
+            {
+                FileStream file = new FileStream(filePath, FileMode.Open);
+                MD5 md5 = new MD5CryptoServiceProvider();
+                byte[] retVal = md5.ComputeHash(file);
+                file.Close();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < retVal.Length; i++)
+                {
+                    sb.Append(retVal[i].ToString("x2"));
+                }
+                return sb.ToString().ToUpper();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("GetMD5HashFromFile() fail,error:" + ex.Message);
+            }
+        }
+        #endregion
     }
 }

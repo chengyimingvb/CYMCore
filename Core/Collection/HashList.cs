@@ -15,10 +15,12 @@ namespace CYM
     public interface IHashList
     {
         int Add(object value);
+        bool Contains(object val);
     }
     [Unobfus]
     [Serializable]
     public class HashList<T> : List<T>, IHashList, IDeserializationCallback
+        //where T:class
     {
         public HashSet<T> Hash { get; private set; }
 
@@ -79,6 +81,10 @@ namespace CYM
         public new bool Contains(T ent)
         {
             return Hash.Contains(ent);
+        }
+        public  bool Contains(object ent)
+        {
+            return Hash.Contains((T)ent);
         }
         public bool Contains(HashList<T> ent)
         {

@@ -14,12 +14,12 @@ namespace CYM
         /// <summary>
         /// internal storage of list data
         /// </summary>
-        public T[] data;
+        public T[] data { get; private set; }
 
         /// <summary>
         /// The number of elements in the list
         /// </summary>
-        public int Count = 0;
+        public int Count { get; private set; } = 0;
 
         /// <summary>
         /// Indexed access to the list items

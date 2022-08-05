@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-#if UNITY_5_5_OR_NEWER
-#endif
 
 // /////////////////////////////////////////////////////////////////////////////////////////
 //                              More Effective Coroutines Pro
@@ -719,137 +714,137 @@ namespace CYM
 
         private bool OnEditorStart()
         {
-#if UNITY_EDITOR
-            if (EditorApplication.isPlayingOrWillChangePlaymode)
-                return false;
+//#if UNITY_EDITOR
+//            if (EditorApplication.isPlayingOrWillChangePlaymode)
+//                return false;
 
-            if (_lastEditorUpdateTime < 0.001)
-                _lastEditorUpdateTime = (float)EditorApplication.timeSinceStartup;
+//            if (_lastEditorUpdateTime < 0.001)
+//                _lastEditorUpdateTime = (float)EditorApplication.timeSinceStartup;
 
-            if (ActiveInstances[_instanceID] == null)
-                OnEnable();
+//            if (ActiveInstances[_instanceID] == null)
+//                OnEnable();
 
-            EditorApplication.update -= OnEditorUpdate;
+//            EditorApplication.update -= OnEditorUpdate;
 
-            EditorApplication.update += OnEditorUpdate;
+//            EditorApplication.update += OnEditorUpdate;
 
-            return true;
-#else
+//            return true;
+//#else
             return false;
-#endif
+//#endif
         }
 
 #if UNITY_EDITOR
         private void OnEditorUpdate()
         {
-            if (OnPreExecute != null)
-                OnPreExecute();
+            //if (OnPreExecute != null)
+            //    OnPreExecute();
 
-            if (EditorApplication.isPlayingOrWillChangePlaymode)
-            {
-                for (int i = 0; i < _nextEditorUpdateProcessSlot; i++)
-                    EditorUpdateProcesses[i] = null;
-                _nextEditorUpdateProcessSlot = 0;
-                for (int i = 0; i < _nextEditorSlowUpdateProcessSlot; i++)
-                    EditorSlowUpdateProcesses[i] = null;
-                _nextEditorSlowUpdateProcessSlot = 0;
+            //if (EditorApplication.isPlayingOrWillChangePlaymode)
+            //{
+            //    for (int i = 0; i < _nextEditorUpdateProcessSlot; i++)
+            //        EditorUpdateProcesses[i] = null;
+            //    _nextEditorUpdateProcessSlot = 0;
+            //    for (int i = 0; i < _nextEditorSlowUpdateProcessSlot; i++)
+            //        EditorSlowUpdateProcesses[i] = null;
+            //    _nextEditorSlowUpdateProcessSlot = 0;
 
-                EditorApplication.update -= OnEditorUpdate;
-                _instance = null;
-            }
+            //    EditorApplication.update -= OnEditorUpdate;
+            //    _instance = null;
+            //}
 
-            if (_lastEditorSlowUpdateTime + TimeBetweenSlowUpdateCalls < EditorApplication.timeSinceStartup && _nextEditorSlowUpdateProcessSlot > 0)
-            {
-                ProcessIndex coindex = new ProcessIndex { seg = Segment.EditorSlowUpdate };
-                if (UpdateTimeValues(coindex.seg))
-                    _lastEditorSlowUpdateProcessSlot = _nextEditorSlowUpdateProcessSlot;
+            //if (_lastEditorSlowUpdateTime + TimeBetweenSlowUpdateCalls < EditorApplication.timeSinceStartup && _nextEditorSlowUpdateProcessSlot > 0)
+            //{
+            //    ProcessIndex coindex = new ProcessIndex { seg = Segment.EditorSlowUpdate };
+            //    if (UpdateTimeValues(coindex.seg))
+            //        _lastEditorSlowUpdateProcessSlot = _nextEditorSlowUpdateProcessSlot;
 
-                for (coindex.i = 0; coindex.i < _lastEditorSlowUpdateProcessSlot; coindex.i++)
-                {
-                    currentCoroutine = _indexToHandle[coindex];
+            //    for (coindex.i = 0; coindex.i < _lastEditorSlowUpdateProcessSlot; coindex.i++)
+            //    {
+            //        currentCoroutine = _indexToHandle[coindex];
 
-                    try
-                    {
-                        if (!EditorSlowUpdatePaused[coindex.i] && !EditorSlowUpdateHeld[coindex.i] && EditorSlowUpdateProcesses[coindex.i] != null &&
-                            !(EditorApplication.timeSinceStartup < EditorSlowUpdateProcesses[coindex.i].Current))
-                        {
-                            if (!EditorSlowUpdateProcesses[coindex.i].MoveNext())
-                            {
-                                if (_indexToHandle.ContainsKey(coindex))
-                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
-                            }
-                            else if (EditorSlowUpdateProcesses[coindex.i] != null && float.IsNaN(EditorSlowUpdateProcesses[coindex.i].Current))
-                            {
-                                if (ReplacementFunction != null)
-                                {
-                                    EditorSlowUpdateProcesses[coindex.i] = ReplacementFunction(EditorSlowUpdateProcesses[coindex.i], _indexToHandle[coindex]);
-                                    ReplacementFunction = null;
-                                }
-                                coindex.i--;
-                            }
-                        }
-                    }
-                    catch (System.Exception ex)
-                    {
-                        Debug.LogException(ex);
+            //        try
+            //        {
+            //            if (!EditorSlowUpdatePaused[coindex.i] && !EditorSlowUpdateHeld[coindex.i] && EditorSlowUpdateProcesses[coindex.i] != null &&
+            //                !(EditorApplication.timeSinceStartup < EditorSlowUpdateProcesses[coindex.i].Current))
+            //            {
+            //                if (!EditorSlowUpdateProcesses[coindex.i].MoveNext())
+            //                {
+            //                    if (_indexToHandle.ContainsKey(coindex))
+            //                        KillCoroutinesOnInstance(_indexToHandle[coindex]);
+            //                }
+            //                else if (EditorSlowUpdateProcesses[coindex.i] != null && float.IsNaN(EditorSlowUpdateProcesses[coindex.i].Current))
+            //                {
+            //                    if (ReplacementFunction != null)
+            //                    {
+            //                        EditorSlowUpdateProcesses[coindex.i] = ReplacementFunction(EditorSlowUpdateProcesses[coindex.i], _indexToHandle[coindex]);
+            //                        ReplacementFunction = null;
+            //                    }
+            //                    coindex.i--;
+            //                }
+            //            }
+            //        }
+            //        catch (System.Exception ex)
+            //        {
+            //            Debug.LogException(ex);
 
-                        if (ex is MissingReferenceException)
-                            Debug.LogError("This exception can probably be fixed by adding \"CancelWith(gameObject)\" when you run the coroutine.\n"
-                                + "Example: Timing.RunCoroutine(_foo().CancelWith(gameObject), Segment.EditorUpdate);");
-                    }
-                }
-            }
+            //            if (ex is MissingReferenceException)
+            //                Debug.LogError("This exception can probably be fixed by adding \"CancelWith(gameObject)\" when you run the coroutine.\n"
+            //                    + "Example: Timing.RunCoroutine(_foo().CancelWith(gameObject), Segment.EditorUpdate);");
+            //        }
+            //    }
+            //}
 
-            if (_nextEditorUpdateProcessSlot > 0)
-            {
-                ProcessIndex coindex = new ProcessIndex { seg = Segment.EditorUpdate };
-                if (UpdateTimeValues(coindex.seg))
-                    _lastEditorUpdateProcessSlot = _nextEditorUpdateProcessSlot;
+            //if (_nextEditorUpdateProcessSlot > 0)
+            //{
+            //    ProcessIndex coindex = new ProcessIndex { seg = Segment.EditorUpdate };
+            //    if (UpdateTimeValues(coindex.seg))
+            //        _lastEditorUpdateProcessSlot = _nextEditorUpdateProcessSlot;
 
-                for (coindex.i = 0; coindex.i < _lastEditorUpdateProcessSlot; coindex.i++)
-                {
-                    currentCoroutine = _indexToHandle[coindex];
+            //    for (coindex.i = 0; coindex.i < _lastEditorUpdateProcessSlot; coindex.i++)
+            //    {
+            //        currentCoroutine = _indexToHandle[coindex];
 
-                    try
-                    {
-                        if (!EditorUpdatePaused[coindex.i] && !EditorUpdateHeld[coindex.i] && EditorUpdateProcesses[coindex.i] != null &&
-                            !(EditorApplication.timeSinceStartup < EditorUpdateProcesses[coindex.i].Current))
-                        {
-                            if (!EditorUpdateProcesses[coindex.i].MoveNext())
-                            {
-                                if (_indexToHandle.ContainsKey(coindex))
-                                    KillCoroutinesOnInstance(_indexToHandle[coindex]);
-                            }
-                            else if (EditorUpdateProcesses[coindex.i] != null && float.IsNaN(EditorUpdateProcesses[coindex.i].Current))
-                            {
-                                if (ReplacementFunction != null)
-                                {
-                                    EditorUpdateProcesses[coindex.i] = ReplacementFunction(EditorUpdateProcesses[coindex.i], _indexToHandle[coindex]);
-                                    ReplacementFunction = null;
-                                }
-                                coindex.i--;
-                            }
-                        }
-                    }
-                    catch (System.Exception ex)
-                    {
-                        Debug.LogException(ex);
+            //        try
+            //        {
+            //            if (!EditorUpdatePaused[coindex.i] && !EditorUpdateHeld[coindex.i] && EditorUpdateProcesses[coindex.i] != null &&
+            //                !(EditorApplication.timeSinceStartup < EditorUpdateProcesses[coindex.i].Current))
+            //            {
+            //                if (!EditorUpdateProcesses[coindex.i].MoveNext())
+            //                {
+            //                    if (_indexToHandle.ContainsKey(coindex))
+            //                        KillCoroutinesOnInstance(_indexToHandle[coindex]);
+            //                }
+            //                else if (EditorUpdateProcesses[coindex.i] != null && float.IsNaN(EditorUpdateProcesses[coindex.i].Current))
+            //                {
+            //                    if (ReplacementFunction != null)
+            //                    {
+            //                        EditorUpdateProcesses[coindex.i] = ReplacementFunction(EditorUpdateProcesses[coindex.i], _indexToHandle[coindex]);
+            //                        ReplacementFunction = null;
+            //                    }
+            //                    coindex.i--;
+            //                }
+            //            }
+            //        }
+            //        catch (System.Exception ex)
+            //        {
+            //            Debug.LogException(ex);
 
-                        if (ex is MissingReferenceException)
-                            Debug.LogError("This exception can probably be fixed by adding \"CancelWith(gameObject)\" when you run the coroutine.\n"
-                                + "Example: Timing.RunCoroutine(_foo().CancelWith(gameObject), Segment.EditorUpdate);");
-                    }
-                }
-            }
+            //            if (ex is MissingReferenceException)
+            //                Debug.LogError("This exception can probably be fixed by adding \"CancelWith(gameObject)\" when you run the coroutine.\n"
+            //                    + "Example: Timing.RunCoroutine(_foo().CancelWith(gameObject), Segment.EditorUpdate);");
+            //        }
+            //    }
+            //}
 
-            if (++_framesSinceUpdate > FramesUntilMaintenance)
-            {
-                _framesSinceUpdate = 0;
+            //if (++_framesSinceUpdate > FramesUntilMaintenance)
+            //{
+            //    _framesSinceUpdate = 0;
 
-                EditorRemoveUnused();
-            }
+            //    EditorRemoveUnused();
+            //}
 
-            currentCoroutine = default(CoroutineHandle);
+            //currentCoroutine = default(CoroutineHandle);
         }
 #endif
 
@@ -3080,9 +3075,9 @@ namespace CYM
             _expansions = (ushort)((_expansions / 2) + 1);
             Links.Clear();
 
-#if UNITY_EDITOR
-            EditorApplication.update -= OnEditorUpdate;
-#endif
+//#if UNITY_EDITOR
+//            EditorApplication.update -= OnEditorUpdate;
+//#endif
             return retVal;
         }
 
@@ -3433,39 +3428,39 @@ namespace CYM
                         localTime = _lastRealtimeUpdateTime;
                         return false;
                     }
-#if UNITY_EDITOR
-                case Segment.EditorUpdate:
-                    if (_lastEditorUpdateTime + 0.0001 < EditorApplication.timeSinceStartup)
-                    {
-                        _lastEditorUpdateDeltaTime = (float)EditorApplication.timeSinceStartup - _lastEditorUpdateTime;
-                        if (_lastEditorUpdateDeltaTime > Time.maximumDeltaTime)
-                            _lastEditorUpdateDeltaTime = Time.maximumDeltaTime;
+//#if UNITY_EDITOR
+//                case Segment.EditorUpdate:
+//                    if (_lastEditorUpdateTime + 0.0001 < EditorApplication.timeSinceStartup)
+//                    {
+//                        _lastEditorUpdateDeltaTime = (float)EditorApplication.timeSinceStartup - _lastEditorUpdateTime;
+//                        if (_lastEditorUpdateDeltaTime > Time.maximumDeltaTime)
+//                            _lastEditorUpdateDeltaTime = Time.maximumDeltaTime;
 
-                        deltaTime = _lastEditorUpdateDeltaTime;
-                        localTime = _lastEditorUpdateTime = (float)EditorApplication.timeSinceStartup;
-                        return true;
-                    }
-                    else
-                    {
-                        deltaTime = _lastEditorUpdateDeltaTime;
-                        localTime = _lastEditorUpdateTime;
-                        return false;
-                    }
-                case Segment.EditorSlowUpdate:
-                    if (_lastEditorSlowUpdateTime + 0.0001 < EditorApplication.timeSinceStartup)
-                    {
-                        _lastEditorSlowUpdateDeltaTime = (float)EditorApplication.timeSinceStartup - _lastEditorSlowUpdateTime;
-                        deltaTime = _lastEditorSlowUpdateDeltaTime;
-                        localTime = _lastEditorSlowUpdateTime = (float)EditorApplication.timeSinceStartup;
-                        return true;
-                    }
-                    else
-                    {
-                        deltaTime = _lastEditorSlowUpdateDeltaTime;
-                        localTime = _lastEditorSlowUpdateTime;
-                        return false;
-                    }
-#endif
+//                        deltaTime = _lastEditorUpdateDeltaTime;
+//                        localTime = _lastEditorUpdateTime = (float)EditorApplication.timeSinceStartup;
+//                        return true;
+//                    }
+//                    else
+//                    {
+//                        deltaTime = _lastEditorUpdateDeltaTime;
+//                        localTime = _lastEditorUpdateTime;
+//                        return false;
+//                    }
+//                case Segment.EditorSlowUpdate:
+//                    if (_lastEditorSlowUpdateTime + 0.0001 < EditorApplication.timeSinceStartup)
+//                    {
+//                        _lastEditorSlowUpdateDeltaTime = (float)EditorApplication.timeSinceStartup - _lastEditorSlowUpdateTime;
+//                        deltaTime = _lastEditorSlowUpdateDeltaTime;
+//                        localTime = _lastEditorSlowUpdateTime = (float)EditorApplication.timeSinceStartup;
+//                        return true;
+//                    }
+//                    else
+//                    {
+//                        deltaTime = _lastEditorSlowUpdateDeltaTime;
+//                        localTime = _lastEditorSlowUpdateTime;
+//                        return false;
+//                    }
+//#endif
                 case Segment.EndOfFrame:
                     if (_currentEndOfFrameFrame != Time.frameCount)
                     {
@@ -3528,11 +3523,11 @@ namespace CYM
                         return _lastRealtimeUpdateTime;
                     else
                         return _lastRealtimeUpdateTime + Time.unscaledDeltaTime;
-#if UNITY_EDITOR
-                case Segment.EditorUpdate:
-                case Segment.EditorSlowUpdate:
-                    return (float)EditorApplication.timeSinceStartup;
-#endif
+//#if UNITY_EDITOR
+//                case Segment.EditorUpdate:
+//                case Segment.EditorSlowUpdate:
+//                    return (float)EditorApplication.timeSinceStartup;
+//#endif
                 case Segment.EndOfFrame:
                     if (_currentUpdateFrame == Time.frameCount)
                         return _lastEndOfFrameTime;

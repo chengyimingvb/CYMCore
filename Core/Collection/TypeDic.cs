@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-/// <summary>
+﻿/// <summary>
 /// 访问更加安全的Dictionary
 /// </summary>
 namespace CYM
 {
     public class TypeDic<T, V> : SafeDic<T, HashList<V>>
+        where V:class
     {
         public HashList<V> Get(T key)
         {

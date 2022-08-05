@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CYM
 {
@@ -17,26 +11,28 @@ namespace CYM
     {
         const string Yes = "Yes";
         const string No = "No";
+        const string ColorFormat = "<color={1}>{0}</color>";
+
         #region Base
-        public static string Decorate(string numberStr, string color) => string.Format("<color={0}>{1}</color>", color, numberStr);
         // 根据sign是否大于0决定一些东西
         // positiveSign:是否给正数写加号
-        static string DecorateStr(string numberStr, float? sign, bool positiveSign, bool reverseColor)
+        static string WrapColorSign(string numberStr, float? sign, bool positiveSign, bool reverseColor)
         {
-            if (sign == null)
-                return "";
+            if (numberStr == null) return "";
+            if (sign == null) return "";
             return string.Format("<color={0}>{1}{2}</color>", reverseColor ? GetColor(-sign.Value) : GetColor(sign.Value), positiveSign && sign >= 0 ? "+" : "", numberStr);
         }
 
-        static string GetSign(float number)
+        static string GetSign(float? number)
         {
+            if (number == null) return "";
             if (number >= 0) return "+";
             else if (number < 0) return "";
             else return "";
         }
-
-        static string GetColor(float number, bool isReverseCol = false)
+        static string GetColor(float? number, bool isReverseCol = false)
         {
+            if (number == null) return "";
             if (number > 0)
             {
                 if (!isReverseCol) return SysConst.COL_Green;
@@ -49,93 +45,108 @@ namespace CYM
             }
             else return SysConst.COL_Yellow;
         }
+        #endregion
 
-        static string ValidDigit(float f, int digit)
-        {
-            if (digit <= 0) throw new ArgumentOutOfRangeException();
-            string e = string.Format("{0:e" + (digit - 1) + "}", f);
-            float fd = float.Parse(e);
-            return fd.ToString();
-        }
-        public static string Floor(float f) => Mathf.FloorToInt(f).ToString();
-        public static string Ceil(float f) => Mathf.CeilToInt(f).ToString();
-        public static string Round(float f) => Mathf.RoundToInt(f).ToString();
-        public static string RoundSign(float f) => GetSign(f) + Round(Mathf.Abs(f));
-        public static string RoundColor(float f) => DecorateStr(Round(f), f, false, false);
-        public static string Plain(int i) => i.ToString();
-        public static string Plain(float f) => f.ToString();
-        public static string ColSign(int number) => DecorateStr(number.ToString(), number, true, false);
-        public static string ColSign(float number, bool reverseColor = false) => DecorateStr(number.ToString(), number, true, reverseColor);
-        public static string Bool(float val)
-        {
-            if (val <= 0.0f) return No;
-            else return Yes;
-        }
-        public static string Bool(bool b)
-        {
-            if (!b) return No;
-            else return Yes;
-        }
-        public static string Sign(float val) => val >= 0 ? "+" + val.ToString() : val.ToString();
-        public static string Sign(float val, string str) => val >= 0 ? "+" + str : str;
+        #region Normal
+        public static string CS(int? number) => WrapColorSign(number.ToString(), number, true, false);
+        public static string CS(float? number, bool reverseColor = false) => WrapColorSign(number.ToString(), number, true, reverseColor);
+        public static string Sign(float? val) => val >= 0 ? "+" + val.ToString() : val.ToString();
+        public static string Sign(float? val, string str) => val >= 0 ? "+" + str : str;
         public static string Sign(string str) => !str.StartsWith("-") ? "+" + str : str;
         #endregion
 
-        #region Digital
-        public static string OneD(float? f, bool isOption = false) => OneDFormat(f, isOption);
-        public static string TwoD(float f, bool isOption = false) => TwoDFormat(f, isOption);
+        #region floor & ceil
+        public static string Floor(float? f)
+        {
+            if (f == null) return "";
+            return Mathf.FloorToInt(f.Value).ToString();
+        }
+        public static string Ceil(float? f)
+        {
+            if (f == null) return "";
+            return Mathf.CeilToInt(f.Value).ToString();
+        }
+        #endregion
 
-        public static string TwoDS(float f)
+        #region bool
+        public static string Bool(float? val)
+        {
+            if (val == null) return "";
+            if (val <= 0.0f) return No;
+            else return Yes;
+        }
+        public static string Bool(bool? b)
+        {
+            if (b == null) return "";
+            if (!b.Value) return No;
+            else return Yes;
+        }
+        #endregion
+
+        #region Round
+        public static string Round(float? f)
+        {
+            if (f == null) return "";
+            return Mathf.RoundToInt(f.Value).ToString();
+        }
+        public static string RoundS(float? f)
+        {
+            if (f == null) return "";
+            return GetSign(f) + Round(Mathf.Abs(f.Value));
+        }
+        public static string RoundC(float? f) => WrapColorSign(Round(f), f, false, false);
+        // 小于1的时候显示1位小数,否则返回整数
+        public static string RoundD(float? f)
+        {
+            if (f == null) return "";
+            if (f == 0.0f) return Round(f);
+            if (f < 1.0f && f > -1.0f) return string.Format("{0:0.0}", f);
+            else return Round(f);
+        }
+        #endregion
+
+        #region Digital
+        public static string OneD(float? f, bool isOption = false)
+        {
+            return OneDFormat();
+            string OneDFormat() => isOption ? string.Format("{0:0.#}", f.HasValue ? f : 0) : string.Format("{0:0.0}", f);
+        }
+        public static string TwoD(float? f, bool isOption = false)
+        {
+            return TwoDFormat();
+            string TwoDFormat() => isOption ? string.Format("{0:0.##}", f) : string.Format("{0:0.00}", f);
+        }
+        public static string TwoDS(float? f)
         {
             string sign = GetSign(f);
             return string.Format("{1}{0:0.00}", f, sign);
         }
-        public static string TwoDC(float f, bool isReverseCol = false)
+        public static string TwoDC(float? f, bool isReverseCol = false)
         {
             string color = GetColor(f, isReverseCol);
             return string.Format("<color={0}>{1:0.00}</color>", color, f);
         }
-        public static string TwoDCS(float f, bool isReverseCol = false)
+        public static string TwoDCS(float? f, bool isReverseCol = false)
         {
             string sign = GetSign(f);
             string color = GetColor(f, isReverseCol);
             return string.Format("<color={0}>{1}{2:0.00}</color>", color, sign, f);
         }
-
-        public static string OneDS(float f)
+        public static string OneDS(float? f)
         {
             string sign = GetSign(f);
             return string.Format("{1}{0:0.0}", f, sign);
         }
-        public static string OneDC(float f, bool isReverseCol = false)
+        public static string OneDC(float? f, bool isReverseCol = false)
         {
             string color = GetColor(f, isReverseCol);
             return string.Format("<color={0}>{1:0.0}</color>", color, f);
         }
-        public static string OneDCS(float f, bool isReverseCol = false)
+        public static string OneDCS(float? f, bool isReverseCol = false)
         {
             string sign = GetSign(f);
             string color = GetColor(f, isReverseCol);
             return string.Format("<color={0}>{1}{2:0.0}</color>", color, sign, f);
-        }
-
-        // 小于1的时候显示1位小数,否则返回整数
-        public static string RoundD(float f)
-        {
-            if (f == 0.0f)
-                return Round(f);
-            if (f < 1.0f && f > -1.0f)
-                return string.Format("{0:0.0}", f);
-            else
-                return Round(f);
-        }
-        static string OneDFormat(float? f, bool isOption)
-        {
-            return isOption ? string.Format("{0:0.#}", f.HasValue ? f : 0) : string.Format("{0:0.0}", f);
-        }
-        static string TwoDFormat(float f, bool isOption)
-        {
-            return isOption ? string.Format("{0:0.##}", f) : string.Format("{0:0.00}", f);
         }
         #endregion
 
@@ -143,12 +154,12 @@ namespace CYM
         public static string KMG(float? number, KMGType type = KMGType.TenK)
         {
             if (number == null) return "";
-            float f = GetNumber((int)number);
-            return ValidDigit(f, 2) + GetSuffix((int)number);
+            float f = GetNumber(number.Value);
+            return ((int)f) +  GetSuffix(number.Value);//ValidDigit(f, 2) + GetSuffix((int)number);
 
-            float GetNumber(int num)
+            float GetNumber(float num)
             {
-                int abs = Mathf.Abs(num);
+                float abs = Mathf.Abs(num);
 
                 if (type == KMGType.TenK)
                 {
@@ -174,9 +185,9 @@ namespace CYM
                 }
                 return num;
             }
-            string GetSuffix(int num)
+            string GetSuffix(float num)
             {
-                int abs = Mathf.Abs(num);
+                float abs = Mathf.Abs(num);
                 if (type == KMGType.TenK)
                 {
                     if (abs >= 10000000)
@@ -201,34 +212,42 @@ namespace CYM
                 }
                 return "";
             }
+            //string ValidDigit(float val, int digit)
+            //{
+            //    if (digit <= 0) throw new ArgumentOutOfRangeException();
+            //    string e = string.Format("{0:e" + (digit - 1) + "}", val);
+            //    float fd = float.Parse(e);
+            //    return fd.ToString();
+            //}
         }
         public static string KMGC(float? number, bool reverseColor = false, KMGType type = KMGType.TenK)
         {
-            return DecorateStr(KMG((int)number, type), number, false, reverseColor);
+            return WrapColorSign(KMG((int)number, type), number, false, reverseColor);
         }
         public static string KMGCS(float? number, bool reverseColor = false, KMGType type = KMGType.TenK)
         {
-            return DecorateStr(KMG((int)number, type), number, true, reverseColor);
+            return WrapColorSign(KMG((int)number, type), number, true, reverseColor);
         }
         #endregion
 
         #region 百分比
         // 裁剪小数部分
-        public static string AddPerSign(int? percent)
+        public static string PerS(int? percent)
         {
             if (percent == null) return "";
             return string.Format("{0}%", percent.Value);
         }
-        //百分号
-        public static string PerToInt(float? percent, bool isHaveSignal = true)
+        //百分号，无小数，I=Integer
+        public static string PerI(float? percent, bool isHaveSignal = true)
         {
             if (percent == null) return "";
             return string.Format("{0}", (int)(percent.Value * 100)) + (isHaveSignal ? "%" : "");
         }
-        public static string PerToIntCol(float? percent, bool isHaveSignal = true)
+        //百分号，无小数，C=Color，I=Integer
+        public static string PerCI(float? percent, bool isHaveSignal = true)
         {
             if (percent == null) return "";
-            return DecorateStr(string.Format("{0}%", (int)(percent.Value * 100)), percent.Value, isHaveSignal, false);
+            return WrapColorSign(string.Format("{0}%", (int)(percent.Value * 100)), percent.Value, isHaveSignal, false);
         }
         // 保留小数部分
         public static string Per(float? percent)
@@ -236,7 +255,7 @@ namespace CYM
             if (percent == null) return "";
             return string.Format("{0}%", OneD(percent.Value * 100));
         }
-        public static string PerSign(float? percent)
+        public static string PerS(float? percent)
         {
             if (percent == null) return "";
             return percent >= 0 ? "+" + Per(percent) : Per(percent);
@@ -244,26 +263,21 @@ namespace CYM
         public static string PerC(float? percent, bool reverseColor = false)
         {
             if (percent == null) return "";
-            return DecorateStr(Per(percent), percent, false, reverseColor);
+            return WrapColorSign(Per(percent), percent, false, reverseColor);
         }
         public static string PerCS(float? percent, bool reverseColor = false)
         {
             if (percent == null) return "";
-            return DecorateStr(Per(percent), percent, true, reverseColor);
-        }
-        // 天枰颜色
-        public static string PerApparently(float? percent, string colorLeft = SysConst.COL_Yellow, string colorRight = SysConst.COL_Green)
-        {
-            if (percent == null) return "";
-            return string.Format("<color={0}>{1}</color>", percent.Value <= 0.0f ? colorLeft : colorRight, Per(Mathf.Abs(percent.Value)));
+            return WrapColorSign(Per(percent), percent, true, reverseColor);
         }
         #endregion
 
         #region UI Special
-        // 1-100数值越大,颜色越红
-        public static string RiseColInt(float num, bool isReverseColor = false, int min = 0, int max = 100)
+        // 1-100数值越大,颜色越红，C=Color，I=Integer
+        public static string RiseCI(float? num, bool isReverseColor = false, int min = 0, int max = 100)
         {
-            int round = Mathf.RoundToInt(num);
+            if (num == null) return "";
+            int round = Mathf.RoundToInt(num.Value);
             int small = Mathf.RoundToInt((max - min) * 0.3f + min);
             int big = Mathf.RoundToInt((max - min) * 0.7f + min);
             float colorSign = GetRiseColSign(round, small, big);
@@ -273,16 +287,17 @@ namespace CYM
             }
 
             return Decorate(round.ToString(), GetColor(colorSign));
+
+            float GetRiseColSign(int num1, int small1, int big1)=> num1 < small1 ? -1 : (big1 < 70 ? 0 : 1);
+
+            string Decorate(string numberStr, string color) => string.Format("<color={0}>{1}</color>", color, numberStr);
         }
-        // 1-100数值越小,颜色越红
-        public static string DeriseColInt(float num, int min = 0, int max = 100)
+        // 1-100数值越小,颜色越红，C=Color，I=Integer
+        public static string DeriseCI(float? num, int min = 0, int max = 100)=> RiseCI(num, true, min, max);
+        // 0-1%百分数值越小,颜色越红，C=Color，P=Percent
+        public static string RiseCP(float? num, bool isReverseColor = false, bool isHaveSignal = true)
         {
-            return RiseColInt(num, true, min, max);
-        }
-        // 0-1数值越小,颜色越红
-        public static string PerRiseCol(float num, bool isReverseColor = false, bool isHaveSignal = true)
-        {
-            string percentStr = PerToInt(num, isHaveSignal);
+            string percentStr = PerI(num, isHaveSignal);
             if (!isReverseColor)
             {
                 if (num > 0.7) return Green(percentStr);
@@ -297,54 +312,54 @@ namespace CYM
             }
             return percentStr;
         }
-        public static float GetRiseColSign(int num, int small, int big)
+        public static string DeriseCP(float? num, bool isHaveSignal = true)=> RiseCP(num, true, isHaveSignal);
+        // 天枰颜色，P=Percent
+        public static string ApparP(float? percent, string colorLeft = SysConst.COL_Yellow, string colorRight = SysConst.COL_Green)
         {
-            return num < small ? -1 : (big < 70 ? 0 : 1);
+            if (percent == null) return "";
+            return string.Format("<color={0}>{1}</color>", percent.Value <= 0.0f ? colorLeft : colorRight, Per(Mathf.Abs(percent.Value)));
         }
-        public static string CDStyle(float f)
+        //CD时间
+        public static string CD(float? f)
         {
-            if (f > 1.0f)
-                return Round(f);
+            if (f == null) return null;
+            if (f > 1.0f) return Round(f);
             return string.Format("{0:0.0}", f);
         }
         #endregion
 
         #region UIColor
-        public static string Nation(string name) => string.Format("<color={1}>{0}</color>", name, SysConst.COL_Yellow);
-        public static string Castle(string name) => string.Format("<color={1}>{0}</color>", name, SysConst.COL_Green);
-
-        public static string Yellow(string name) => string.Format("<color={1}>{0}</color>", name, SysConst.COL_Yellow);
+        //国家颜色
+        public static string Nation(string name) => string.Format(ColorFormat, name, SysConst.COL_Yellow);
+        //城市颜色
+        public static string Castle(string name) => string.Format(ColorFormat, name, SysConst.COL_Green);
+        //宗教
+        public static string Religion(string name) => string.Format(ColorFormat, name, SysConst.COL_Yellow);
+        //贸易
+        public static string TradeRes(string name) => string.Format(ColorFormat, name, SysConst.COL_Grey);
+        //黄色
+        public static string Yellow(string name) => string.Format(ColorFormat, name, SysConst.COL_Yellow);
         public static string Yellow(float number) => Yellow(number.ToString());
-
-        public static string Red(string name) => string.Format("<color={1}>{0}</color>", name, SysConst.COL_Red);
+        //红色
+        public static string Red(string name) => string.Format(ColorFormat, name, SysConst.COL_Red);
         public static string Red(float number) => Red(number.ToString());
-
-        public static string Green(string name) => string.Format("<color={1}>{0}</color>", name, SysConst.COL_Green);
+        //绿色
+        public static string Green(string name) => string.Format(ColorFormat, name, SysConst.COL_Green);
         public static string Green(float number) => Green(number);
-
-        public static string Grey(string name) => string.Format("<color={1}>{0}</color>", name, SysConst.COL_Grey);
+        //灰色
+        public static string Grey(string name) => string.Format(ColorFormat, name, SysConst.COL_Grey);
         public static string Grey(float number) => Grey(number);
+        #endregion
 
-        public static string Religion(string name) => string.Format("<color={1}>{0}</color>", name, SysConst.COL_Yellow);
-        public static string TradeRes(string name) => string.Format("<color={1}>{0}</color>", name, SysConst.COL_Grey);
-
+        #region Misc
         public static Color FromHex(string str)
         {
             Color color = new Color();
             ColorUtility.TryParseHtmlString(str, out color);
             return color;
         }
-        public static string ToHex(Color color)
-        {
-            return ColorUtility.ToHtmlStringRGBA(color);
-        }
-        #endregion
-
-        #region Misc
-        public static string Indent(string str)
-        {
-            return SysConst.STR_Indent+str;
-        }
+        public static string ToHex(Color color)=>ColorUtility.ToHtmlStringRGBA(color);
+        public static string Indent(string str)=> SysConst.STR_Indent + str;
         #endregion
 
         #region presenter

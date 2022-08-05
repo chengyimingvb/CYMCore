@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using UnityEngine;
 //**********************************************
 // Discription	：Base Core Calss .All the Mono will inherit this class
@@ -19,8 +18,8 @@ namespace CYM
     {
         public float Min;
         public float Max;
-        public float Sum { get { return Min + Max; } }
-        public float Length { get { return Max - Min; } }
+        public float Sum => Min + Max;
+        public float Length => Max - Min;
 
         public Range(float min, float max)
         {
@@ -28,21 +27,9 @@ namespace CYM
             this.Max = max;
         }
 
-        public bool IsIn(float val)
-        {
-            return val >= Min && val < Max;
-        }
-        public float Clamp(float val)
-        {
-            return Mathf.Clamp(val, Min, Max);
-        }
-        public float Rand()
-        {
-            return UnityEngine.Random.Range(Min, Max);
-        }
-        public float Tolerance()
-        {
-            return Mathf.Clamp(Max - Min,0,int.MaxValue);
-        }
+        public bool IsIn(float val)=> val >= Min && val < Max;
+        public float Clamp(float val)=> Mathf.Clamp(val, Min, Max);
+        public float Rand()=> UnityEngine.Random.Range(Min, Max);
+        public float Tolerance()=> Mathf.Clamp(Max - Min, 0, float.MaxValue);
     }
 }

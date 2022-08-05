@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace CYM
@@ -96,71 +95,7 @@ namespace CYM
         }
         #endregion
 
-        #region Ray cast
-        public static GameObject MousePick(int mask)
-        {
-            if (Camera.main == null)
-                return null;
-            GameObject ret = null;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, mask))
-            {
-                ret = hitInfo.collider.gameObject;
-            }
-            return ret;
-        }
-        public static GameObject ScreenPick(Vector2 screenPos,int mask)
-        {
-            if (Camera.main == null)
-                return null;
-            GameObject ret = null;
-            Ray ray = Camera.main.ScreenPointToRay(screenPos);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, mask))
-            {
-                ret = hitInfo.collider.gameObject;
-            }
-            return ret;
-        }
-        public static void FollowToMousePos(GameObject go, float fixedHeight = 0.5f)
-        {
-            if (go == null)
-                return;
-            Vector3 dragItemScreenSpace = Camera.main.WorldToScreenPoint(go.transform.position);
-            Vector3 currentScreenSpace = new Vector3(Input.mousePosition.x, Input.mousePosition.y, dragItemScreenSpace.z);
-            Vector3 currentPosition = Camera.main.ScreenToWorldPoint(currentScreenSpace);
-            currentPosition = currentPosition.SetY(fixedHeight);
-            go.transform.position = currentPosition;
-        }
-        public static void FollowToScreenPos(GameObject go,Vector2 screenPos, float fixedHeight = 0.5f)
-        {
-            if (go == null)
-                return;
-            Vector3 dragItemScreenSpace = Camera.main.WorldToScreenPoint(go.transform.position);
-            Vector3 currentScreenSpace = new Vector3(screenPos.x, screenPos.y, dragItemScreenSpace.z);
-            Vector3 currentPosition = Camera.main.ScreenToWorldPoint(currentScreenSpace);
-            currentPosition = currentPosition.SetY(fixedHeight);
-            go.transform.position = currentPosition;
-        }
-        /// <summary>
-        /// 检测Y轴碰撞体,防止下沉
-        /// </summary>
-        /// <param name="trans"></param>
-        /// <param name="yoffset"></param>
-        /// <param name="mask"></param>
-        public static void RaycastY(Transform trans, float yoffset, LayerData layer)
-        {
-            trans.position = GetRaycastY(trans, yoffset, layer);
-        }
-        /// <summary>
-        /// 检测Y轴碰撞体,防止下沉
-        /// </summary>
-        /// <param name="trans"></param>
-        /// <param name="yoffset"></param>
-        /// <param name="layer"></param>
-        public static void RaycastY(Transform trans, float yoffset, LayerMask mask)
-        {
-            trans.position = GetRaycastY(trans, yoffset, mask);
-        }
+        #region get ray cast pos
         /// <summary>
         /// 获得Y轴坐标
         /// </summary>
@@ -193,33 +128,157 @@ namespace CYM
             Physics.Raycast(new Ray(opos, pos - opos), out hitInfo, float.MaxValue, mask);
             return new Vector3(hitInfo.point.x, yoffset + hitInfo.point.y, hitInfo.point.z);
         }
-        public static bool MouseRayCast(out RaycastHit hit, LayerMask layer)
+        #endregion
+
+        #region Ray cast
+        public static GameObject MousePick(int mask)
         {
-            hit = new RaycastHit();
-            if (Camera.main == null) return false;
-            if (Camera.main.orthographic) return false;
-            return Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 999, layer, QueryTriggerInteraction.Collide);
+            if (Camera.main == null)
+                return null;
+            GameObject ret = null;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, mask))
+            {
+                ret = hitInfo.collider.gameObject;
+            }
+            return ret;
+        }
+        public static GameObject ScreenPick(Vector2 screenPos,int mask)
+        {
+            if (Camera.main == null)
+                return null;
+            GameObject ret = null;
+            Ray ray = Camera.main.ScreenPointToRay(screenPos);
+            if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, mask))
+            {
+                ret = hitInfo.collider.gameObject;
+            }
+            return ret;
+        }
+        public static void FollowToMousePos(GameObject go, float fixedHeight = 0.5f)
+        {
+            if (Camera.main == null) 
+                return;
+            if (go == null)
+                return;
+            Vector3 dragItemScreenSpace = Camera.main.WorldToScreenPoint(go.transform.position);
+            Vector3 currentScreenSpace = new Vector3(Input.mousePosition.x, Input.mousePosition.y, dragItemScreenSpace.z);
+            Vector3 currentPosition = Camera.main.ScreenToWorldPoint(currentScreenSpace);
+            currentPosition = currentPosition.SetY(fixedHeight);
+            go.transform.position = currentPosition;
+        }
+        public static void FollowToScreenPos(GameObject go,Vector2 screenPos, float fixedHeight = 0.5f)
+        {
+            if (Camera.main == null)
+                return;
+            if (go == null)
+                return;
+            Vector3 dragItemScreenSpace = Camera.main.WorldToScreenPoint(go.transform.position);
+            Vector3 currentScreenSpace = new Vector3(screenPos.x, screenPos.y, dragItemScreenSpace.z);
+            Vector3 currentPosition = Camera.main.ScreenToWorldPoint(currentScreenSpace);
+            currentPosition = currentPosition.SetY(fixedHeight);
+            go.transform.position = currentPosition;
+        }
+        /// <summary>
+        /// 检测Y轴碰撞体,防止下沉
+        /// </summary>
+        /// <param name="trans"></param>
+        /// <param name="yoffset"></param>
+        /// <param name="mask"></param>
+        public static void RaycastY(Transform trans, float yoffset, LayerData layer)
+        {
+            trans.position = GetRaycastY(trans, yoffset, layer);
+        }
+        /// <summary>
+        /// 检测Y轴碰撞体,防止下沉
+        /// </summary>
+        /// <param name="trans"></param>
+        /// <param name="yoffset"></param>
+        /// <param name="layer"></param>
+        public static void RaycastY(Transform trans, float yoffset, LayerMask mask)
+        {
+            trans.position = GetRaycastY(trans, yoffset, mask);
         }
         public static bool RayCast(out RaycastHit hit, Vector2 pos, LayerMask layer)
         {
             hit = new RaycastHit();
-            if (Camera.main == null) return false;
+            if (Camera.main == null) 
+                return false;
             return Physics.Raycast(new Ray(new Vector3(pos.x, int.MaxValue * 0.5f, pos.y), -Vector3.up), out hit, int.MaxValue, layer, QueryTriggerInteraction.Collide);
         }
-        public static bool ScreenRayCast(out RaycastHit hit, Vector2 pos, LayerMask layer)
+        public static bool ScreenRayCast(out RaycastHit hit, Vector2 screenPos, LayerMask layer)
         {
             hit = new RaycastHit();
-            if (Camera.main == null) return false;
-            var ray = Camera.main.ScreenPointToRay(new Vector3(pos.x, pos.y, 0));
-            if (Physics.Raycast(ray, out hit, layer))
-            {
-                return true;
-            }
-            return false;
+            if (Camera.main == null) 
+                return false;
+            return Physics.Raycast(Camera.main.ScreenPointToRay(screenPos), out hit, 9999, layer, QueryTriggerInteraction.Collide);
         }
         public static bool ScreenCenterRayCast(out RaycastHit hit, LayerMask layer)
         {
-            return ScreenRayCast(out hit, new Vector3(Screen.width / 2, Screen.height / 2),layer);
+            return ScreenRayCast(out hit, new Vector2(Screen.width / 2, Screen.height / 2),layer);
+        }
+        public static bool OverlapPoint2D(out Collider2D collider, Vector2 screenPos, LayerMask layer)
+        {
+            collider = null;
+            if (Camera.main == null) 
+                return false;
+            collider = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(screenPos), layer, -9999, 9999);
+            return collider != null;
+        }
+        public static bool OverlapPointAll2D(out Collider2D[] collider, Vector2 screenPos, LayerMask layer)
+        {
+            collider = null;
+            if (Camera.main == null) 
+                return false;
+            collider = Physics2D.OverlapPointAll(Camera.main.ScreenToWorldPoint(screenPos), layer, -9999, 9999);
+            return collider != null;
+        }
+        public static (Collider col , Collider2D col2D) PickCollider(Vector2 screenPos, LayerMask layer)
+        {
+            if (ScreenRayCast(out RaycastHit hitInfo, screenPos, layer))
+            {
+                return (hitInfo.collider,null);
+            }
+            else if(OverlapPoint2D(out Collider2D collider2D, screenPos, layer))
+            {
+                return (null, collider2D);
+            }
+            return (null,null);
+        }
+        public static Component PickColliderCom(Vector2 screenPos, LayerMask layer)
+        {
+            var picked = PickCollider(screenPos, layer);
+            if (picked.col != null)
+                return picked.col;
+            else if (picked.col2D != null)
+                return picked.col2D;
+            return null;
+        }
+        public static (Collider[] cols, Collider2D[] cols2D) OverlapSphere(Vector3 pos,float radius, LayerMask layer)
+        {
+            var cols = Physics.OverlapSphere(pos, radius, layer);
+            if (cols != null && cols.Length > 0)
+            {
+                return (cols, null);
+            }
+            else
+            {
+                var cols2D = Physics2D.OverlapCircleAll(pos, radius, layer, -9999, 9999);
+                if (cols2D != null && cols2D.Length > 0)
+                {
+                    return (null, cols2D);
+                }
+            }
+            return (null, null);
+        }
+        public static Component[] OverlapSphereCom(Vector3 pos, float radius, LayerMask layer)
+        {
+            var picked = OverlapSphere(pos, radius, layer);
+            if (picked.cols != null)
+                return picked.cols;
+            else if (picked.cols2D != null)
+                return picked.cols2D;
+            return null;
         }
         public static ScreenEdgeType ScreenEdge(GameObject go,float width)
         {
@@ -329,6 +388,8 @@ namespace CYM
         #region screen pos
         public static float PosScreenX(Vector3 WorldPos)
         {
+            if (Camera.main == null)
+                return 0;
             var Pos = Camera.main.WorldToScreenPoint(WorldPos);
             float x = Pos.x / Screen.width;
             return x;
@@ -336,6 +397,8 @@ namespace CYM
         // 转换屏幕坐标Y
         public static float PosScreenY(Vector3 WorldPos)
         {
+            if (Camera.main == null)
+                return 0;
             var Pos = Camera.main.WorldToScreenPoint(WorldPos);
             float y = Pos.y / Screen.height;
             return y;
@@ -343,10 +406,18 @@ namespace CYM
         // 世界坐标转换到屏幕坐标
         public static Vector2 PosScreen(Vector3 WorldPos)
         {
+            if (Camera.main == null)
+                return Vector2.zero;
             var Pos = Camera.main.WorldToScreenPoint(WorldPos);
             Vector2 retPos = new Vector2(Pos.x, Pos.y);
-
             return retPos;
+        }
+        public static Vector2 ScreenToWorld(Vector2 screenPos)
+        {
+            if (Camera.main == null)
+                return Vector2.zero;
+            var Pos = Camera.main.ScreenToWorldPoint(screenPos, Camera.MonoOrStereoscopicEye.Mono);
+            return Pos;
         }
         #endregion
 
@@ -380,6 +451,18 @@ namespace CYM
             if (ret < 0)
                 ret = 0;
             return TimeSpan.FromTicks(ret);
+        }
+        #endregion
+
+        #region other
+        public static byte[] IntToBytes(int value)
+        {
+            byte[] src = new byte[4];
+            src[3] = (byte)((value >> 24) & 0xFF);
+            src[2] = (byte)((value >> 16) & 0xFF);
+            src[1] = (byte)((value >> 8) & 0xFF);
+            src[0] = (byte)(value & 0xFF);
+            return src;
         }
         #endregion
     }

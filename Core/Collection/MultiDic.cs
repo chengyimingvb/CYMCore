@@ -23,6 +23,10 @@ namespace CYM
             Item1 = key1;
             Item2 = key2;
         }
+        public override string ToString()
+        {
+            return Item1.ToString() +"="+ Item2.ToString();
+        }
     }
     public interface IMultiDic
     {

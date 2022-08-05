@@ -59,6 +59,14 @@ namespace CYM
         {
             CurCount = count;
         }
+        public void SetResetCount(float count)
+        {
+            ResetCount = count;
+        }
+        public void SetIsFinish(bool b)
+        {
+            IsFinish = b;
+        }
         public virtual void ForceOver()
         {
             CurCount = TotalCout;

@@ -6,9 +6,7 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 namespace CYM
 {
     public interface IListDic

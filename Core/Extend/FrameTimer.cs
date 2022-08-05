@@ -1,8 +1,5 @@
 using UnityEngine;
 using System;
-using System.Collections;
-using System.Linq;
-using System.Globalization;
 using System.Collections.Generic;
 
 namespace CYM
@@ -72,14 +69,14 @@ namespace CYM
             Application.quitting += () => IsQuitting = true;
         }
 
-#if UNITY_EDITOR
-        static List<DelayedEditorAction> delayedEditorActions = new List<DelayedEditorAction>();
+//#if UNITY_EDITOR
+//        static List<DelayedEditorAction> delayedEditorActions = new List<DelayedEditorAction>();
 
-        static FrameTimer()
-        {
-            UnityEditor.EditorApplication.update += EditorUpdate;
-        }
-#endif
+//        static FrameTimer()
+//        {
+//            UnityEditor.EditorApplication.update += EditorUpdate;
+//        }
+//#endif
         #endregion
 
         #region get
@@ -97,28 +94,28 @@ namespace CYM
         #region update
         static void EditorUpdate()
         {
-#if UNITY_EDITOR
-            if (Application.isPlaying) return;
+//#if UNITY_EDITOR
+//            if (Application.isPlaying) return;
 
-            var actionsToExecute = delayedEditorActions.Where(dea => UnityEditor.EditorApplication.timeSinceStartup >= dea.TimeToExecute).ToList();
+//            var actionsToExecute = delayedEditorActions.Where(dea => UnityEditor.EditorApplication.timeSinceStartup >= dea.TimeToExecute).ToList();
 
-            if (actionsToExecute.Count == 0) return;
+//            if (actionsToExecute.Count == 0) return;
 
-            foreach (var actionToExecute in actionsToExecute)
-            {
-                try
-                {
-                    if (actionToExecute.ActionTarget != null || actionToExecute.ForceEvenIfTargetIsGone) // don't execute if the target is gone
-                    {
-                        actionToExecute.Action.Invoke();
-                    }
-                }
-                finally
-                {
-                    delayedEditorActions.Remove(actionToExecute);
-                }
-            }
-#endif
+//            foreach (var actionToExecute in actionsToExecute)
+//            {
+//                try
+//                {
+//                    if (actionToExecute.ActionTarget != null || actionToExecute.ForceEvenIfTargetIsGone) // don't execute if the target is gone
+//                    {
+//                        actionToExecute.Action.Invoke();
+//                    }
+//                }
+//                finally
+//                {
+//                    delayedEditorActions.Remove(actionToExecute);
+//                }
+//            }
+//#endif
         }
         private void Update()
         {
@@ -169,12 +166,12 @@ namespace CYM
             {
                 Ins.delayedActions.Add(new DelayedAction { timeToExecute = Time.unscaledTime + delay, action = action, target = actionTarget, forceEvenIfTargetIsInactive = forceEvenIfObjectIsInactiveP });
             }
-#if UNITY_EDITOR
-            else
-            {
-                delayedEditorActions.Add(new DelayedEditorAction(UnityEditor.EditorApplication.timeSinceStartup + delay, action, actionTarget, forceEvenIfObjectIsInactiveP));
-            }
-#endif
+//#if UNITY_EDITOR
+//            else
+//            {
+//                delayedEditorActions.Add(new DelayedEditorAction(UnityEditor.EditorApplication.timeSinceStartup + delay, action, actionTarget, forceEvenIfObjectIsInactiveP));
+//            }
+//#endif
         }
 
         /// <summary>

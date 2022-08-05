@@ -90,7 +90,8 @@ namespace CYM
             if (array.Length <= 0) return default;
             return array[RangeArray(array.Length)];
         }
-        public static T RandArray<T>(HashList<T> array)
+        public static T RandArray<T>(HashList<T> array) 
+            where T:class
         {
             if (array == null) return default;
             if (array.Count <= 0) return default;
